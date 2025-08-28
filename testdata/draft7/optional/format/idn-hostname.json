@@ -2,7 +2,6 @@
     {
         "description": "validation of internationalized host names",
         "schema": {"format": "idn-hostname"},
-	"disabled" : true,
         "tests": [
             {
                 "description": "a valid host name (example.test in Hangul)",

@@ -91,6 +91,9 @@ type (
 	// HostnameFormatChecker validates a hostname is in the correct format
 	HostnameFormatChecker struct{}
 
+	// IdnHostnameFormatChecker validates an IDN hostname is in the correct format
+	IdnHostnameFormatChecker struct{}
+
 	// UUIDFormatChecker validates a UUID is in the correct format
 	UUIDFormatChecker struct{}
 
@@ -113,6 +116,7 @@ var (
 			"time":                  TimeFormatChecker{},
 			"date-time":             DateTimeFormatChecker{},
 			"hostname":              HostnameFormatChecker{},
+			"idn-hostname":          IdnHostnameFormatChecker{},
 			"email":                 EmailFormatChecker{},
 			"idn-email":             EmailFormatChecker{},
 			"ipv4":                  IPV4FormatChecker{},
@@ -131,6 +135,9 @@ var (
 
 	// Regex credit: https://www.socketloop.com/tutorials/golang-validate-hostname
 	rxHostname = regexp.MustCompile(`^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])(\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]))*$`)
+
+	// Regex credit: chatgpt
+	rxIDNHostname = regexp.MustCompile(`^([\p{L}\p{N}]|[\p{L}\p{N}][\p{L}\p{N}-]{0,61}[\p{L}\p{N}])(\.([\p{L}\p{N}]|[\p{L}\p{N}][\p{L}\p{N}-]{0,61}[\p{L}\p{N}]))*$`)
 
 	// Use a regex to make sure curly brackets are balanced properly after validating it as a AURI
 	rxURITemplate = regexp.MustCompile("^([^{]*({[^}]*})?)*$")
@@ -321,6 +328,16 @@ func (f HostnameFormatChecker) IsFormat(input interface{}) bool {
 	}
 
 	return rxHostname.MatchString(asString) && len(asString) < 256
+}
+
+// IsFormat checks if input is a correctly formatted IDN hostname
+func (f IdnHostnameFormatChecker) IsFormat(input interface{}) bool {
+	asString, ok := input.(string)
+	if !ok {
+		return true
+	}
+
+	return rxIDNHostname.MatchString(asString) && len(asString) < 256
 }
 
 // IsFormat checks if input is a correctly formatted UUID
