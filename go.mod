@@ -1,6 +1,6 @@
 module github.com/CognexVisionSoftware/gojsonschema
 
-go 1.24.2
+go 1.22.12
 
 require (
 	github.com/stretchr/testify v1.3.0
